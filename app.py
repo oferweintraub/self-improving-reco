@@ -6,6 +6,21 @@ from openai import OpenAI
 import json
 import random
 from abc import ABC, abstractmethod
+import hashlib
+import hmac
+
+# Add this near the top of your script, after imports
+# Define users and passwords
+USERS = {
+    "Alain": hashlib.sha256("ibc_2024".encode()).hexdigest(),
+    "Ofer": hashlib.sha256("ibc_2024".encode()).hexdigest(),
+}
+
+def verify_password(password, hashed_password):
+    return hmac.compare_digest(
+        hashlib.sha256(password.encode()).hexdigest(),
+        hashed_password
+    )
 
 # Abstract base class for recommenders
 class BaseRecommender(ABC):
@@ -560,6 +575,21 @@ past_viewed_contents = {
 
 def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
+    
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if not st.session_state.authenticated:
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username in USERS and verify_password(password, USERS[username]):
+                st.session_state.authenticated = True
+                st.experimental_rerun()
+            else:
+                st.error("Invalid username or password")
+        return
 
     # Add CSS styles
     st.markdown("""
