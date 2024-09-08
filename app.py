@@ -684,27 +684,28 @@ def main():
         title = lines[0].strip()
         content = '\n'.join(lines[1:]).strip()
         
-        # Bold the name in the title
+        # Bold the name in the title using markdown
         title_parts = title.split('-')
         if len(title_parts) > 1:
-            bold_title = f"<strong>{title_parts[0].strip()}</strong> - {title_parts[1].strip()}"
+            bold_title = f"**{title_parts[0].strip()}** - {title_parts[1].strip()}"
             name = title_parts[0].strip()
         else:
-            bold_title = f"<strong>{title}</strong>"
+            bold_title = f"**{title}**"
             name = title
 
-        # Bold the first instance of the name in the content
-        content = content.replace(name, f"<strong>{name}</strong>", 1)
+        # Bold the first instance of the name in the content using markdown
+        content = content.replace(name, f"**{name}**", 1)
 
         bullet_points = []
         for line in content.split('\n'):
             line = line.strip()
             if line.startswith('-'):
-                bullet_points.append(f"<li>{line[1:].strip()}</li>")
+                bullet_points.append(f"- {line[1:].strip()}")
             elif line:
-                bullet_points.append(f"<p>{line}</p>")
+                bullet_points.append(line)
         
-        return f"<h3>{bold_title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
+        formatted_content = f"### {bold_title}\n\n" + '\n'.join(bullet_points)
+        return formatted_content
 
     def format_past_viewed(content):
       items = content.strip().split('\n')
@@ -746,7 +747,7 @@ def main():
     with col2:
         st.markdown('<p class="big-bold-title">Select a Persona</p>', unsafe_allow_html=True)
         persona_key = st.selectbox("Choose a Persona", list(personas.keys()), key="persona_select")
-        st.markdown(f'<div class="content-box">{format_persona(personas[persona_key])}</div>', unsafe_allow_html=True)
+        st.markdown(format_persona(personas[persona_key]), unsafe_allow_html=True)
 
     with col3:
         st.markdown('<p class="big-bold-title">Past Viewed Content</p>', unsafe_allow_html=True)
