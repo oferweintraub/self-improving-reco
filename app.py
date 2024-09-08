@@ -558,113 +558,132 @@ past_viewed_contents = {
 
 # Streamlit app
 def main():
-    st.markdown("""
-<style>
-body {
-    background-color: #FFF0F5;  /* Pale pink background */
-}
-.main {
-    background-color: #FFF0F5;
-    color: #5D4037;
-}
-.stButton > button {
-    background-color: #FF9800;
-    color: white;
-    border: 2px solid #FF9800;
-    border-radius: 5px;
-    padding: 0.5em 1em;
-}
-.stButton > button:hover {
-    border: 2px solid #FFA726;
-    background-color: #FFA726;
-}
-.stButton > button:active {
-    background-color: #FB8C00;
-    border: 2px solid #FB8C00;
-}
-.stSelectbox {
-    background-color: #FFE0B2;
-}
-.content-box {
-    background-color: #FFFFFF;
-    border: 1px solid #FFE0B2;
-    border-radius: 5px;
-    padding: 15px;
-    height: 400px;
-    overflow-y: auto;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    text-align: left;
-    vertical-align: top;
-}
-.content-box h3 {
-    color: #E65100;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-.content-box ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    margin-top: 10px;
-}
-.content-box li {
-    margin-bottom: 10px;
-}
-.content-box p {
-    margin-bottom: 10px;
-}
-.content-box strong {
-    color: #E65100;
-}
-.content-box em {
-    color: #5D4037;
-    font-style: normal;
-    font-weight: bold;
-}
-.big-bold-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #E65100;
-    margin-top: 1em;
-    margin-bottom: 0.5em;
-}
-.total-score {
-    font-weight: bold;
-    color: #B70903;
-}
-.reset-button > button {
-    background-color: #F44336;
-    color: white;
-}
-.reset-button > button:hover {
-    background-color: #EF5350;
-}
-.metrics-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.metrics-table th, .metrics-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-.metrics-table th {
-    background-color: #f2f2f2;
-}
-.metrics-table small {
-    font-size: 0.8em;
-    color: #666;
-    display: block;
-    line-height: 1.2;
-    margin-top: 2px;
-}
-</style>
-""", unsafe_allow_html=True)
     
-    st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
+     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
+
+    # Custom CSS
+    st.markdown("""
+    <style>
+    body {
+        background-color: #FFF0F5;  /* Pale pink background */
+    }
+    .main {
+        background-color: #FFF0F5;
+        color: #5D4037;
+    }
+    /* ... rest of your CSS ... */
+    </style>
+    """, unsafe_allow_html=True)
 
     st.title("Self improving targeting based on Tru-values")
+    
+    st.markdown("""
+    <style>
+    body {
+        background-color: #FFF0F5;  /* Pale pink background */
+    }
+    .main {
+        background-color: #FFF0F5;
+        color: #5D4037;
+    }
+    .stButton > button {
+        background-color: #FF9800;
+        color: white;
+        border: 2px solid #FF9800;
+        border-radius: 5px;
+        padding: 0.5em 1em;
+    }
+    .stButton > button:hover {
+        border: 2px solid #FFA726;
+        background-color: #FFA726;
+    }
+    .stButton > button:active {
+        background-color: #FB8C00;
+        border: 2px solid #FB8C00;
+    }
+    .stSelectbox {
+        background-color: #FFE0B2;
+    }
+    .content-box {
+        background-color: #FFFFFF;
+        border: 1px solid #FFE0B2;
+        border-radius: 5px;
+        padding: 15px;
+        height: 400px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        text-align: left;
+        vertical-align: top;
+    }
+    .content-box h3 {
+        color: #E65100;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .content-box ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin-top: 10px;
+    }
+    .content-box li {
+        margin-bottom: 10px;
+    }
+    .content-box p {
+        margin-bottom: 10px;
+    }
+    .content-box strong {
+        color: #E65100;
+    }
+    .content-box em {
+        color: #5D4037;
+        font-style: normal;
+        font-weight: bold;
+    }
+    .big-bold-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #E65100;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+    }
+    .total-score {
+        font-weight: bold;
+        color: #B70903;
+    }
+    .reset-button > button {
+        background-color: #F44336;
+        color: white;
+    }
+    .reset-button > button:hover {
+        background-color: #EF5350;
+    }
+    .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .metrics-table th, .metrics-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .metrics-table th {
+        background-color: #f2f2f2;
+    }
+    .metrics-table small {
+        font-size: 0.8em;
+        color: #666;
+        display: block;
+        line-height: 1.2;
+        margin-top: 2px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
+
+    # st.title("Self improving targeting based on Tru-values")
 
     col1, col2, col3 = st.columns(3)
 
