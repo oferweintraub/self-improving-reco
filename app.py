@@ -799,70 +799,70 @@ def main():
         st.rerun()
 
     if generate_button:
-        if "open_api_key" in st.secrets:
-            api_key = st.secrets["open_api_key"]
-            with st.spinner("Generating recommendation..."):
-                openai_recommender = OpenAIRecommender(movie_stories[movie_story_key]["story"],
-                                                    personas[persona_key],
-                                                    past_viewed_contents[persona_key],
-                                                    recommender_model=llm_reco,
-                                                    evaluator_model=llm_eval,
-                                                    n_past_recommendations=3)
-                recommender = MovieRecommender(openai_recommender)
+    if "open_api_key" in st.secrets:
+        api_key = st.secrets["open_api_key"]
+        with st.spinner("Generating recommendation..."):
+            openai_recommender = OpenAIRecommender(movie_stories[movie_story_key]["story"],
+                                                personas[persona_key],
+                                                past_viewed_contents[persona_key],
+                                                recommender_model=llm_reco,
+                                                evaluator_model=llm_eval,
+                                                n_past_recommendations=3)
+            recommender = MovieRecommender(openai_recommender)
 
-                # Create a placeholder for live updates
-                update_placeholder = st.empty()
+            # Create a placeholder for live updates
+            update_placeholder = st.empty()
 
-                # Run the recommendation loop and show live updates
-                for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
-                    with update_placeholder.container():
-                        st.markdown(f"### Iteration {iteration}")
-                        st.markdown(f"**One-liner:** {one_liner}")
-                        st.markdown(f"**Tailored Message:** {tailored_message}")
-                        st.progress(iteration / recommender.max_iterations)
+            # Run the recommendation loop and show live updates
+            for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
+                with update_placeholder.container():
+                    st.markdown(f"### Iteration {iteration}")
+                    st.markdown(f"**One-liner:** {one_liner}")
+                    st.markdown(f"**Tailored Message:** {tailored_message}")
+                    st.progress(iteration / recommender.max_iterations)
 
-                        # Display metrics in a single four-column table
-                        st.write("Current Metrics:")
+                    # Display metrics in a single four-column table
+                    st.write("Current Metrics:")
 
-                        # Highlight total_score
-                        total_score = metrics.get('total_score', 'N/A')
-                        st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
-                        
-                        metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
-            metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
+                    # Highlight total_score
+                    total_score = metrics.get('total_score', 'N/A')
+                    st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
+                    
+                    metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
+                    metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
 
-            # Add explanations for each metric
-            metric_explanations = {
-                'iteration': 'Current iteration number in the recommendation process.',
-                'total_score': 'Overall score combining all individual metric scores.',
-                'moving_avg': 'Average of recent scores to track improvement trends.',
-                'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
-                'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
-                'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
-                'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
-                'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
-                'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
-                'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
-                'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
-                'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
-                'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
-                'cultural_relevance_score': 'Relevance to current cultural trends and values.',
-                'overall_improvement': 'Degree of enhancement compared to previous iterations.'
-            }
+                    # Add explanations for each metric
+                    metric_explanations = {
+                        'iteration': 'Current iteration number in the recommendation process.',
+                        'total_score': 'Overall score combining all individual metric scores.',
+                        'moving_avg': 'Average of recent scores to track improvement trends.',
+                        'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
+                        'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
+                        'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
+                        'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
+                        'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
+                        'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
+                        'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
+                        'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
+                        'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
+                        'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
+                        'cultural_relevance_score': 'Relevance to current cultural trends and values.',
+                        'overall_improvement': 'Degree of enhancement compared to previous iterations.'
+                    }
 
-            metrics_df['Explanation'] = metrics_df['Metric'].map(metric_explanations)
+                    metrics_df['Explanation'] = metrics_df['Metric'].map(metric_explanations)
 
-            # Create HTML for the table with explanations
-            html_table = "<table class='metrics-table'>"
-            html_table += "<tr><th>Metric</th><th>Value</th></tr>"
-            for _, row in metrics_df.iterrows():
-                html_table += f"<tr><td>{row['Metric']}</td><td>{row['Value']}</td></tr>"
-                html_table += f"<tr><td colspan='2'><small>{row['Explanation']}</small></td></tr>"
-            html_table += "</table>"
+                    # Create HTML for the table with explanations
+                    html_table = "<table class='metrics-table'>"
+                    html_table += "<tr><th>Metric</th><th>Value</th></tr>"
+                    for _, row in metrics_df.iterrows():
+                        html_table += f"<tr><td>{row['Metric']}</td><td>{row['Value']}</td></tr>"
+                        html_table += f"<tr><td colspan='2'><small>{row['Explanation']}</small></td></tr>"
+                    html_table += "</table>"
 
-            st.markdown(html_table, unsafe_allow_html=True)
+                    st.markdown(html_table, unsafe_allow_html=True)
 
-            st.success("Recommendation generation complete!")
+        st.success("Recommendation generation complete!")
 
             # Store the results in session state
             st.session_state.recommender = recommender
