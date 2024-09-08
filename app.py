@@ -668,7 +668,7 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    st.title("Self-improving content recommendations based on Tru-values")
+    st.title("Self improving targeting based on Tru-values")
 
     # Create three columns for the main content
     col1, col2, col3 = st.columns(3)
