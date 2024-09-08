@@ -576,7 +576,7 @@ def main():
     st.markdown("""
     <style>
     body {
-        background-color: #FFF0F5;  /* Pale pink background */
+        background-color: #FFF0F5;
     }
     .main {
         background-color: #FFF0F5;
