@@ -392,7 +392,7 @@ movie_stories = {
 
 personas = {
     "Environmental Conservation - George": """
-      Environmental conservation focuses on preserving the planet's natural resources and ecosystems for future generations. People who hold this as a core value are likely to:​
+      George focuses on preserving the planet's natural resources and ecosystems for future generations. People who hold this as a core value are likely to:​
     - Support renewable energy initiatives (solar, wind, hydroelectric)​
     - Advocate for policies to reduce greenhouse gas emissions​
     - Practice and promote sustainable living (recycling, reducing waste)​
@@ -402,7 +402,7 @@ personas = {
     Key concerns: Climate change, deforestation, pollution, biodiversity loss​
     """,
     "Animal Welfare - Jane​": """
-      This value centers on the belief that animals deserve respect, care, and protection. Individuals who prioritize animal welfare often:​
+      Jane​ believes that animals deserve respect, care, and protection. Individuals who prioritize animal welfare often:​
     - Support animal rights organizations and wildlife conservation efforts​
     - Choose cruelty-free products and oppose animal testing in cosmetics and pharmaceuticals​
     - Advocate for stronger animal protection laws​
@@ -412,7 +412,7 @@ personas = {
     Key concerns: Factory farming, endangered species, animal testing, habitat destruction​
     """,
     "Education for All​ - Harish": """
-      This value is based on the belief that education is a fundamental right and a key driver of personal and societal progress. Supporters of this value tend to:​
+      Harish believes that education is a fundamental right and a key driver of personal and societal progress. Supporters of this value tend to:​
     - Advocate for equal access to quality education, regardless of socioeconomic status​
     - Support initiatives to improve literacy rates globally​
     - Promote lifelong learning and continuing education programs​
@@ -422,7 +422,7 @@ personas = {
     Key concerns: Educational inequality, illiteracy, skills gap, educational technology access​
     """,
     "Natural Food and Health - Hannah": """
-      This value emphasizes the importance of nutrition and natural remedies in maintaining health and treating diseases. Adherents to this value often:​
+      Hannah emphasizes the importance of nutrition and natural remedies in maintaining health and treating diseases. Adherents to this value often:​
     - Prioritize organic, non-GMO, and locally sourced foods​
     - Support sustainable and regenerative agriculture practices​
     - Explore alternative and complementary medicine (herbal remedies, acupuncture)​
@@ -432,7 +432,7 @@ personas = {
     Key concerns: Food additives, pesticides, processed foods, holistic health approaches​
     """,
     "Ethical Technology - Taylor":"""
-​     This value focuses on the responsible development and use of technology, particularly in the digital age. People who prioritize ethical technology often:​
+​     Taylor focuses on the responsible development and use of technology, particularly in the digital age. People who prioritize ethical technology often:​
     - Advocate for strong data privacy laws and practices​
     - Support open-source software and hardware initiatives​
     - Promote digital literacy and cybersecurity awareness​
@@ -680,19 +680,26 @@ def main():
       return f"<h3>{title}</h3><p>{content}</p>"
 
     def format_persona(persona):
-      lines = persona.split('\n')
-      title = lines[0].strip()
-      content = '\n'.join(lines[1:]).strip()
-      bullet_points = []
-      for line in content.split('\n'):
-          line = line.strip()
-          if line.startswith('-'):
-              # Preserve the first letter by not stripping it
-              bullet_points.append(f"<li>{line[1:].strip()}</li>")
-          elif line:  # Add non-empty lines that don't start with '-' as regular paragraphs
-              bullet_points.append(f"<p>{line}</p>")
-      
-      return f"<h3>{title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
+        lines = persona.split('\n')
+        title = lines[0].strip()
+        
+        # Extract the name from the title
+        name = title.split('-')[0].strip()
+        
+        # Make the name bold in the title
+        title = f"<strong>{name}</strong> - {title.split('-')[1].strip()}"
+        
+        content = '\n'.join(lines[1:]).strip()
+        bullet_points = []
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith('-'):
+                # Preserve the first letter by not stripping it
+                bullet_points.append(f"<li>{line[1:].strip()}</li>")
+            elif line:  # Add non-empty lines that don't start with '-' as regular paragraphs
+                bullet_points.append(f"<p>{line}</p>")
+        
+        return f"<h3>{title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
 
     def format_past_viewed(content):
       items = content.strip().split('\n')
