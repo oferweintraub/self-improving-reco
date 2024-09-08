@@ -517,11 +517,155 @@ def reset_session():
 def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
 
-    # Custom CSS for styling (your existing CSS here)
+    # Custom CSS for styling
     st.markdown("""
     <style>
-    /* Your existing CSS styles here */
-    .metrics-table {
+    .main {
+        background-color: #FFF3E0;
+        color: #5D4037;
+    }
+
+    .stButton > button {
+        background-color: #FF9800;
+        color: white;
+        border: 2px solid #FF9800;
+        border-radius: 5px;
+        padding: 0.5em 1em;
+    }
+
+    .stButton > button:hover {
+        border: 2px solid #FFA726;
+        background-color: #FFA726;
+    }
+
+    .stButton > button:active {
+        background-color: #FB8C00;
+        border: 2px solid #FB8C00;
+    }
+
+    .stSelectbox {
+        background-color: #FFE0B2;
+    }
+
+    .content-box {
+        background-color: #FFFFFF;
+        border: 1px solid #FFE0B2;
+        border-radius: 5px;
+        padding: 15px;
+        height: 400px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .content-box h3 {
+        color: #E65100;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .content-box ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .content-box li {
+        margin-bottom: 10px;
+    }
+
+    .content-box p {
+        margin-bottom: 10px;
+    }
+
+    .content-box strong {
+        color: #E65100;
+    }
+
+    .content-box em {
+        color: #5D4037;
+        font-style: normal;
+        font-weight: bold;
+    }
+
+    .big-bold-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #E65100;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+    }
+
+    .total-score {
+        font-weight: bold;
+        color: #B70903;
+    }
+
+    .reset-button > button {
+        background-color: #F44336;
+        color: white;
+    }
+
+    .reset-button > button:hover {
+        background-color: #EF5350;
+    }
+
+    /* Style for the disabled selectbox */
+    .stSelectbox[disabled] {
+        opacity: 1;
+    }
+
+    .stSelectbox[disabled] > div > div {
+        background-color: transparent;
+        border: none;
+        color: #5D4037;
+        font-weight: bold;
+    }
+
+    .stSelectbox[disabled] > div > div > div {
+        display: none;
+    }
+
+    /* Additional styles for better formatting */
+    .content-box br {
+        content: "";
+        margin: 2em;
+        display: block;
+        font-size: 24%;
+    }
+
+    /* Ensure consistent text color in all columns */
+    .stMarkdown, .stMarkdown p, .stMarkdown li {
+        color: #5D4037;
+    }
+
+    /* Add some space between the content boxes and the model selection area */
+    .stSelectbox:nth-of-type(3) {
+        margin-top: 20px;
+    }
+    .metrics-container {
+    width: 100%;
+    overflow-x: auto;
+    }
+   .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+   .metrics-table th, .metrics-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+   .metrics-table th {
+      background-color: #f2f2f2;
+    }
+   .total-score {
+      font-weight: bold;
+      color: #B70903;
+    }
+    
+   .metrics-table {
         width: 100%;
         border-collapse: collapse;
     }
@@ -540,13 +684,79 @@ def main():
         line-height: 1.2;
         margin-top: 2px;
     }
-    </style>
-    """, unsafe_allow_html=True)
+
+</style>
+""", unsafe_allow_html=True)
 
     st.title("Self improving targeting based on Tru-values")
 
     # Create three columns for the main content
     col1, col2, col3 = st.columns(3)
+
+    def format_movie_story(story):
+      lines = story.split('\n')
+      title = lines[0].strip()
+      content = ' '.join(lines[1:]).strip()
+      return f"<h3>{title}</h3><p>{content}</p>"
+
+    def format_persona(persona):
+        lines = persona.split('\n')
+        title = lines[0].strip()
+        content = '\n'.join(lines[1:]).strip()
+        
+        # Bold the name in the title
+        title_parts = title.split('-')
+        if len(title_parts) > 1:
+            bold_title = f"<strong>{title_parts[0].strip()}</strong> - {title_parts[1].strip()}"
+            name = title_parts[0].strip()
+        else:
+            bold_title = f"<strong>{title}</strong>"
+            name = title
+
+        # Bold the first instance of the name in the content
+        content = content.replace(name, f"<strong>{name}</strong>", 1)
+
+        bullet_points = []
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith('-'):
+                bullet_points.append(f"<li>{line[1:].strip()}</li>")
+            elif line:
+                bullet_points.append(f"<p>{line}</p>")
+        
+        return f"<h3>{bold_title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
+
+    def format_past_viewed(content):
+      items = content.strip().split('\n')
+      formatted_items = []
+      current_item = {}
+
+      for line in items:
+          line = line.strip()
+          if line.startswith('-'):
+              if current_item:
+                  formatted_items.append(current_item)
+                  current_item = {}
+
+              parts = line[1:].split(':', 1)
+              if len(parts) == 2:
+                  key, value = parts
+                  current_item[key.strip()] = value.strip()
+
+      if current_item:
+          formatted_items.append(current_item)
+
+      html_output = "<ul style='list-style-type: disc; padding-left: 20px;'>"
+      for item in formatted_items:
+          if 'Movie' in item or 'Book' in item or 'Documentary' in item:
+              title_key = next(key for key in item.keys() if key in ['Movie', 'Book', 'Documentary'])
+              html_output += f"<li><strong>{title_key}:</strong> {item[title_key]}"
+              if 'Description' in item:
+                  html_output += f"<br><em>Description:</em> {item['Description']}"
+              html_output += "</li>"
+
+      html_output += "</ul>"
+      return html_output
 
     with col1:
         st.markdown('<p class="big-bold-title">Select a Movie</p>', unsafe_allow_html=True)
@@ -621,36 +831,23 @@ def main():
                         metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
                         metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
 
-                        # Add explanations for each metric
-                        metric_explanations = {
-                            'iteration': 'Current iteration number in the recommendation process.',
-                            'total_score': 'Overall score combining all individual metric scores.',
-                            'moving_avg': 'Average of recent scores to track improvement trends.',
-                            'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
-                            'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
-                            'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
-                            'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
-                            'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
-                            'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
-                            'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
-                            'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
-                            'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
-                            'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
-                            'cultural_relevance_score': 'Relevance to current cultural trends and values.',
-                            'overall_improvement': 'Degree of enhancement compared to previous iterations.'
-                        }
+                        # Replace <NA> with empty string
+                        metrics_df = metrics_df.fillna("")
 
-                        metrics_df['Explanation'] = metrics_df['Metric'].map(metric_explanations)
+                        # Split the DataFrame into two parts
+                        half = len(metrics_df) // 2
+                        left_df = metrics_df.iloc[:half].reset_index(drop=True)
+                        right_df = metrics_df.iloc[half:].reset_index(drop=True)
 
-                        # Create HTML for the table with explanations
-                        html_table = "<table class='metrics-table'>"
-                        html_table += "<tr><th>Metric</th><th>Value</th></tr>"
-                        for _, row in metrics_df.iterrows():
-                            html_table += f"<tr><td>{row['Metric']}</td><td>{row['Value']}</td></tr>"
-                            html_table += f"<tr><td colspan='2'><small>{row['Explanation']}</small></td></tr>"
-                        html_table += "</table>"
+                        # Combine into a single DataFrame with four columns
+                        combined_df = pd.concat([left_df, right_df], axis=1)
+                        combined_df.columns = ['Metric 1', 'Value 1', 'Metric 2', 'Value 2']
+                        
+                        # Replace <NA> with empty string
+                        combined_df = combined_df.fillna("")
 
-                        st.markdown(html_table, unsafe_allow_html=True)
+                        # Use Streamlit's native table display
+                        st.table(combined_df)
 
             st.success("Recommendation generation complete!")
 
@@ -680,6 +877,6 @@ def main():
         else:
             st.error("OpenAI API key not found in secrets. Please add it to continue.")
 
+
 if __name__ == "__main__":
     main()
-
