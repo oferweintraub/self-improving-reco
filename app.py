@@ -557,11 +557,11 @@ past_viewed_contents = {
 }
 
 # Streamlit app
+
 def main():
-  def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
 
-    # Add this CSS block right after st.set_page_config
+    # Add CSS styles
     st.markdown("""
     <style>
     body {
@@ -630,6 +630,7 @@ def main():
     """, unsafe_allow_html=True)
 
     st.title("Self improving targeting based on Tru-values")
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
