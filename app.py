@@ -558,7 +558,7 @@ past_viewed_contents = {
 
 # Streamlit app
 
- def main():
+def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
 
     # Add CSS styles
