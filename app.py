@@ -558,10 +558,78 @@ past_viewed_contents = {
 
 # Streamlit app
 def main():
+  def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
 
-    st.title("Self improving targeting based on Tru-values")
+    # Add this CSS block right after st.set_page_config
+    st.markdown("""
+    <style>
+    body {
+        background-color: #FFF0F5;  /* Pale pink background */
+    }
+    .main {
+        background-color: #FFF0F5;
+        color: #5D4037;
+    }
+    .content-box {
+        background-color: #FFFFFF;
+        border: 1px solid #FFE0B2;
+        border-radius: 5px;
+        padding: 15px;
+        height: 400px;
+        overflow-y: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        text-align: left;
+        vertical-align: top;
+    }
+    .content-box h3 {
+        color: #E65100;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .content-box ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin-top: 10px;
+    }
+    .content-box li {
+        margin-bottom: 10px;
+    }
+    .content-box p {
+        margin-bottom: 10px;
+    }
+    .big-bold-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #E65100;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+    }
+    .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .metrics-table th, .metrics-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .metrics-table th {
+        background-color: #f2f2f2;
+    }
+    .metrics-table small {
+        font-size: 0.8em;
+        color: #666;
+        display: block;
+        line-height: 1.2;
+        margin-top: 2px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
+    st.title("Self improving targeting based on Tru-values")
     col1, col2, col3 = st.columns(3)
 
     with col1:
