@@ -540,26 +540,6 @@ def main():
         line-height: 1.2;
         margin-top: 2px;
     }
-    
-    .metrics-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-    .metrics-table th, .metrics-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-        vertical-align: top;
-    }
-    .metrics-table th {
-        background-color: #f2f2f2;
-    }
-    .metrics-table small {
-        font-size: 0.8em;
-        color: #666;
-        display: block;
-        line-height: 1.2;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -631,8 +611,10 @@ def main():
                         st.markdown(f"**Tailored Message:** {tailored_message}")
                         st.progress(iteration / recommender.max_iterations)
 
+                        # Display metrics in a single four-column table
                         st.write("Current Metrics:")
 
+                        # Highlight total_score
                         total_score = metrics.get('total_score', 'N/A')
                         st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
                         
@@ -658,14 +640,14 @@ def main():
                             'overall_improvement': 'Degree of enhancement compared to previous iterations.'
                         }
 
+                        metrics_df['Explanation'] = metrics_df['Metric'].map(metric_explanations)
+
                         # Create HTML for the table with explanations
                         html_table = "<table class='metrics-table'>"
-                        html_table += "<tr><th>Metric</th><th>Value</th><th>Explanation</th></tr>"
+                        html_table += "<tr><th>Metric</th><th>Value</th></tr>"
                         for _, row in metrics_df.iterrows():
-                            metric = row['Metric']
-                            value = row['Value']
-                            explanation = metric_explanations.get(metric, "")
-                            html_table += f"<tr><td>{metric}</td><td>{value}</td><td><small>{explanation}</small></td></tr>"
+                            html_table += f"<tr><td>{row['Metric']}</td><td>{row['Value']}</td></tr>"
+                            html_table += f"<tr><td colspan='2'><small>{row['Explanation']}</small></td></tr>"
                         html_table += "</table>"
 
                         st.markdown(html_table, unsafe_allow_html=True)
