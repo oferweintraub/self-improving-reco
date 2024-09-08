@@ -680,19 +680,26 @@ def main():
       return f"<h3>{title}</h3><p>{content}</p>"
 
     def format_persona(persona):
-      lines = persona.split('\n')
-      title = lines[0].strip()
-      content = '\n'.join(lines[1:]).strip()
-      bullet_points = []
-      for line in content.split('\n'):
-          line = line.strip()
-          if line.startswith('-'):
-              # Preserve the first letter by not stripping it
-              bullet_points.append(f"<li>{line[1:].strip()}</li>")
-          elif line:  # Add non-empty lines that don't start with '-' as regular paragraphs
-              bullet_points.append(f"<p>{line}</p>")
-      
-      return f"<h3>{title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
+        lines = persona.split('\n')
+        title = lines[0].strip()
+        content = '\n'.join(lines[1:]).strip()
+        
+        # Bold the name in the title
+        title_parts = title.split('-')
+        if len(title_parts) > 1:
+            bold_title = f"<strong>{title_parts[0].strip()}</strong> - {title_parts[1].strip()}"
+        else:
+            bold_title = f"<strong>{title}</strong>"
+
+        bullet_points = []
+        for line in content.split('\n'):
+            line = line.strip()
+            if line.startswith('-'):
+                bullet_points.append(f"<li>{line[1:].strip()}</li>")
+            elif line:
+                bullet_points.append(f"<p>{line}</p>")
+        
+        return f"<h3>{bold_title}</h3><ul style='list-style-type: disc; padding-left: 20px;'>" + ''.join(bullet_points) + "</ul>"
 
     def format_past_viewed(content):
       items = content.strip().split('\n')
