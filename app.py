@@ -161,7 +161,6 @@ class OpenAIRecommender(BaseRecommender):
             evaluation['overallImprovement'] = float(evaluation['overallImprovement'])
 
             return evaluation
-        
         except json.JSONDecodeError as e:
             print(f"Error parsing JSON: {str(e)}")
             print("Raw response:", response_content)
@@ -282,7 +281,7 @@ class MovieRecommender:
                 self.best_one_liner = one_liner
                 self.best_tailored_message = tailored_message
 
-            yield iteration, one_liner, tailored_message, metrics, evaluation.get('explanation', ''), evaluation.get('improvementFeedback', {})
+            yield iteration, one_liner, tailored_message, metrics
 
             if moving_avg >= 97:
                 break
@@ -559,7 +558,7 @@ past_viewed_contents = {
 
 # Streamlit app
 
-def main():
+ def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
 
     # Add CSS styles
@@ -631,7 +630,7 @@ def main():
     """, unsafe_allow_html=True)
 
     st.title("Self improving targeting based on Tru-values")
-
+    
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -686,7 +685,7 @@ def main():
 
                 update_placeholder = st.empty()
 
-                for iteration, one_liner, tailored_message, metrics, explanation, improvement_feedback in recommender.run_recommendation_loop():
+                for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
                     with update_placeholder.container():
                         st.markdown(f"### Iteration {iteration}")
                         st.markdown(f"**One-liner:** {one_liner}")
@@ -731,15 +730,6 @@ def main():
                         html_table += "</table>"
 
                         st.markdown(html_table, unsafe_allow_html=True)
-
-                        st.markdown("### Explanation")
-                        st.write(explanation)
-
-                        st.markdown("### Improvement Feedback")
-                        st.markdown("**One-liner:**")
-                        st.write(improvement_feedback.get('oneLiner', 'No feedback provided'))
-                        st.markdown("**Tailored Message:**")
-                        st.write(improvement_feedback.get('tailoredMessage', 'No feedback provided'))
 
             st.success("Recommendation generation complete!")
 
