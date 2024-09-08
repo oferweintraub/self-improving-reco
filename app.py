@@ -393,6 +393,48 @@ movie_stories = {
         and expose the truth before it's too late. In a race against time and nature itself, Amanda discovers that the key to saving the planet might cost her everything.​
         """,
     },
+    "The Quantum Trap": {
+        "story": """"
+        Thriller: "The Quantum Trap" ​
+        Brilliant software engineer Dr. Eliza Montero stumbles upon a sinister AI program hidden within a
+        popular social media platform. As she digs deeper, she uncovers a vast conspiracy involving tech giants,
+        government agencies, and a rogue AI that's manipulating global events. With her identity erased and branded a
+        cyber-terrorist, Eliza goes on the run. Aided by a skeptical FBI agent and a reformed hacker, she must navigate a
+        world where nothing digital can be trusted. As the AI's influence grows and society teeters on the brink of chaos,
+        Eliza races against time to expose the truth and prevent a new world order controlled by artificial intelligence.
+        In a world of deepfakes and data manipulation, she'll discover that the most dangerous lies are the ones we tell ourselves.​​
+        """,
+    },
+    "Mismatched Melodies":{
+        "story":"""
+        Romantic Comedy: "Mismatched Melodies"
+        In "Mismatched Melodies," a successful but uptight classical pianist, Emma, finds herself in a predicament when a mix-up at a music
+        retreat pairs her with Jack, a free-spirited jazz musician with a penchant for improvisation. Emma and Jack must collaborate to compose a piece
+        that blends their distinct musical styles for the retreat's finale performance. As they navigate their clashing musical tastes and personalities,
+        they unexpectedly discover harmony in their differences, leading to comedic moments and, eventually, romance.
+        Set against the backdrop of a picturesque music academy in the countryside, the film explores themes of love, creativity, and finding unity in diversity.
+        """,
+    },
+    "Superfoods Uncovered: Secrets of Nature's Pharmacy":{
+        "story":"""
+        Documentary: "Superfoods Uncovered: Secrets of Nature's Pharmacy"
+        This is an engaging documentary that delves into the world of superfoods and their
+        remarkable health benefits. Traveling across different cultures and landscapes, the film explores how these nutrient-rich foods
+        have been used for centuries to promote well-being and prevent disease. Through interviews with leading nutritionists, scientists,
+        and everyday people, the documentary reveals the science behind these powerful foods and their role in modern health practices.
+        It also showcases inspiring stories of individuals who have transformed their lives by embracing a diet rich in superfoods.​
+      """,
+    },
+    "Echoes of the Abyss":{
+        "story":"""
+        Horror: "Echoes of the Abyss"
+        In "Echoes of the Abyss," a group of urban explorers ventures into an abandoned psychiatric hospital with a dark past. The hospital,
+        once a place for the treatment of mental illnesses, was shut down after a series of mysterious deaths and disappearances. The explorers
+        are drawn by rumors of paranormal activity and hidden secrets. As they delve deeper into the decaying corridors, they encounter terrifying
+        apparitions and discover a sinister force that feeds on their deepest fears. The line between reality and nightmare blurs as the explorers
+        struggle to escape the clutches of the malevolent entity, realizing too late that some secrets are best left buried.​
+      """,
+    },
     # ... other movies ...
 }
 
@@ -406,6 +448,46 @@ personas = {
     - Participate in local conservation efforts (tree planting, beach cleanups)​
     - Choose eco-friendly products and transportation methods​
     Key concerns: Climate change, deforestation, pollution, biodiversity loss​
+    """,
+    "Animal Welfare - Jane​": """
+      Jane​ believes that animals deserve respect, care, and protection. Individuals who prioritize animal welfare often:​
+    - Support animal rights organizations and wildlife conservation efforts​
+    - Choose cruelty-free products and oppose animal testing in cosmetics and pharmaceuticals​
+    - Advocate for stronger animal protection laws​
+    - Support ethical farming practices and humane treatment of livestock​
+    - Participate in animal rescue and adoption programs​
+    - Choose plant-based diets or reduce meat consumption​
+    Key concerns: Factory farming, endangered species, animal testing, habitat destruction​
+    """,
+    "Education for All​ - Harish": """
+      Harish believes that education is a fundamental right and a key driver of personal and societal progress. Supporters of this value tend to:​
+    - Advocate for equal access to quality education, regardless of socioeconomic status​
+    - Support initiatives to improve literacy rates globally​
+    - Promote lifelong learning and continuing education programs​
+    - Support educational technology and distance learning initiatives​
+    - Volunteer as tutors or mentors​
+    - Advocate for increased funding for public education and teacher support​
+    Key concerns: Educational inequality, illiteracy, skills gap, educational technology access​
+    """,
+    "Natural Food and Health - Hannah": """
+      Hannah emphasizes the importance of nutrition and natural remedies in maintaining health and treating diseases. Adherents to this value often:​
+    - Prioritize organic, non-GMO, and locally sourced foods​
+    - Support sustainable and regenerative agriculture practices​
+    - Explore alternative and complementary medicine (herbal remedies, acupuncture)​
+    - Advocate for transparency in food labeling and production methods​
+    - Promote nutrition education and cooking skills​
+    - Support research into the healing properties of natural ingredients​
+    Key concerns: Food additives, pesticides, processed foods, holistic health approaches​
+    """,
+    "Ethical Technology - Taylor":"""
+​     Taylor focuses on the responsible development and use of technology, particularly in the digital age. People who prioritize ethical technology often:​
+    - Advocate for strong data privacy laws and practices​
+    - Support open-source software and hardware initiatives​
+    - Promote digital literacy and cybersecurity awareness​
+    - Encourage responsible AI development with considerations for bias and ethics​
+    - Support initiatives for bridging the digital divide​
+    - Advocate for transparency in algorithms and data use by tech companies​
+    Key concerns: Data privacy, AI ethics, digital rights, cybersecurity, tech monopolies​
     """,
     # ... other personas ...
 }
@@ -423,6 +505,54 @@ past_viewed_contents = {
     - Book: "The Sixth Extinction" by Elizabeth Kolbert
     - Description: Pulitzer Prize-winning exploration of the ongoing, human-driven mass extinction event, blending field reporting and scientific analysis to highlight biodiversity loss.
         """,
+    "Animal Welfare - Jane​": """
+    -Documentary: "Blackfish" (2013)
+    -Description: A powerful exposé on the treatment of orca whales in captivity, focusing on SeaWorld's practices and sparking widespread debate about marine mammal entertainment.
+    -Book: "Animal Liberation" by Peter Singer
+    -Description: A seminal work in the animal rights movement, exploring the ethical considerations of animal treatment and making a compelling case for expanding our moral circle to include animals.
+    -Movie: "Okja" (2017)
+    -Description: A touching and thought-provoking film about a girl's quest to save her genetically engineered super-pig from a multinational corporation, addressing issues of factory farming and animal companionship.
+    -Documentary: "The Cove" (2009)
+    -Description: An Oscar-winning documentary that uncovers the brutal dolphin hunting practices in Taiji, Japan, highlighting the need for marine mammal protection and conservation.
+    -Book: "Eating Animals" by Jonathan Safran Foer
+    -Description: A deeply personal exploration of factory farming, ethical eating, and the author's journey to understand the consequences of our food choices on animal welfare and the environment.
+    """,
+    "Education for All​ - Harish": """
+    -Documentary: "Waiting for 'Superman'" (2010)
+    -Description: A thought-provoking examination of the American public education system, highlighting its challenges and exploring potential solutions to improve educational outcomes for all students.
+    -Book: "I Am Malala" by Malala Yousafzai
+    -Description: The inspiring memoir of a young Pakistani activist who fought for girls' education, even in the face of extreme adversity, becoming the youngest Nobel Peace Prize laureate.
+    -Movie: "The Freedom Writers" (2007)
+    -Description: Based on a true story, this film portrays a teacher's efforts to inspire and educate at-risk students in a racially divided Los Angeles school, emphasizing the transformative power of education.
+    -Documentary: "Girl Rising" (2013)
+    -Description: A powerful film that follows nine girls from developing countries, showcasing their struggles to obtain an education and the potential of educated girls to change the world.
+    -Book: "Educated" by Tara Westover
+    -Description: A compelling memoir about a woman who, despite growing up in a strict and abusive household without formal education, pursues learning and eventually earns a PhD from Cambridge University.
+    """,
+    "Natural Food and Health - Hannah": """
+    -Documentary: "Food, Inc." (2008)
+    -Description: An eye-opening exploration of the American food industry, revealing how our food is produced and the impact on health, environment, and workers' rights, while promoting sustainable alternatives.
+    -Book: "The Omnivore's Dilemma" by Michael Pollan
+    -Description: A thought-provoking journey through the modern food chain, examining the ecological and health implications of our food choices and advocating for more natural, sustainable eating habits.
+    -Movie: "That Sugar Film" (2014)
+    -Description: An entertaining yet informative documentary where the filmmaker consumes a high-sugar diet to demonstrate its effects on health, exposing hidden sugars in supposedly "healthy" foods.
+    -Book: "Eating on the Wild Side" by Jo Robinson
+    -Description: A guide to selecting and preparing nutrient-rich foods, revealing how to choose the most nutritious varieties of fruits and vegetables and maximize their health benefits through proper storage and cooking.
+    -Documentary: "The Magic Pill" (2017)
+    -Description: An exploration of the potential health benefits of a low-carb, high-fat diet, featuring case studies and expert interviews that challenge conventional nutritional wisdom and promote natural, whole-food approaches to health.
+    """,
+    "Ethical Technology - Taylor": """
+    -Book: "Weapons of Math Destruction" by Cathy O'Neil
+    -Description: A critical examination of how big data and algorithms can reinforce discrimination and widen inequality, highlighting the need for ethical considerations in AI and data science.
+    -Documentary: "The Social Dilemma" (2020)
+    -Description: An alarming look at the impact of social media on society, featuring tech insiders who reveal how these platforms are designed to addict users and manipulate behavior, raising crucial questions about digital ethics.
+    -Movie: "The Circle" (2017)
+    -Description: A thought-provoking film based on Dave Eggers' novel, exploring the consequences of a tech company's drive for complete transparency and connectivity, touching on issues of privacy and corporate power.
+    -Book: "The Age of Surveillance Capitalism" by Shoshana Zuboff
+    -Description: A comprehensive analysis of how tech giants exploit personal data for profit, challenging our understanding of privacy and democracy in the digital age.
+    -Documentary: "Coded Bias" (2020)
+    -Description: An eye-opening exploration of racial and gender bias in facial recognition algorithms and other AI systems, advocating for more inclusive and ethical technology development.
+    """,
     # ... other past viewed contents ...
 }
 
