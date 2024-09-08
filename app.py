@@ -688,8 +688,13 @@ def main():
         title_parts = title.split('-')
         if len(title_parts) > 1:
             bold_title = f"<strong>{title_parts[0].strip()}</strong> - {title_parts[1].strip()}"
+            name = title_parts[0].strip()
         else:
             bold_title = f"<strong>{title}</strong>"
+            name = title
+
+        # Bold the first instance of the name in the content
+        content = content.replace(name, f"<strong>{name}</strong>", 1)
 
         bullet_points = []
         for line in content.split('\n'):
