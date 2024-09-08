@@ -665,7 +665,7 @@ def main():
       color: #B70903;
     }
     
-   .metrics-table {
+    .metrics-table {
         width: 100%;
         border-collapse: collapse;
     }
