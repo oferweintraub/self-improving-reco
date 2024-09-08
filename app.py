@@ -648,25 +648,45 @@ def main():
     width: 100%;
     overflow-x: auto;
     }
-  .metrics-table {
+   .metrics-table {
       width: 100%;
       border-collapse: collapse;
     }
-  .metrics-table th, .metrics-table td {
+   .metrics-table th, .metrics-table td {
       border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
     }
-  .metrics-table th {
+   .metrics-table th {
       background-color: #f2f2f2;
     }
-  .total-score {
+   .total-score {
       font-weight: bold;
       color: #B70903;
     }
+    
+   .metrics-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .metrics-table th, .metrics-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .metrics-table th {
+        background-color: #f2f2f2;
+    }
+    .metrics-table small {
+        font-size: 0.8em;
+        color: #666;
+        display: block;
+        line-height: 1.2;
+        margin-top: 2px;
+    }
 
-    </style>
-    """, unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
 
     st.title("Self improving targeting based on Tru-values")
 
@@ -809,25 +829,38 @@ def main():
                         st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
                         
                         metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
-                        metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
+            metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
 
-                        # Replace <NA> with empty string
-                        metrics_df = metrics_df.fillna("")
+            # Add explanations for each metric
+            metric_explanations = {
+                'iteration': 'Current iteration number in the recommendation process.',
+                'total_score': 'Overall score combining all individual metric scores.',
+                'moving_avg': 'Average of recent scores to track improvement trends.',
+                'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
+                'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
+                'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
+                'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
+                'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
+                'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
+                'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
+                'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
+                'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
+                'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
+                'cultural_relevance_score': 'Relevance to current cultural trends and values.',
+                'overall_improvement': 'Degree of enhancement compared to previous iterations.'
+            }
 
-                        # Split the DataFrame into two parts
-                        half = len(metrics_df) // 2
-                        left_df = metrics_df.iloc[:half].reset_index(drop=True)
-                        right_df = metrics_df.iloc[half:].reset_index(drop=True)
+            metrics_df['Explanation'] = metrics_df['Metric'].map(metric_explanations)
 
-                        # Combine into a single DataFrame with four columns
-                        combined_df = pd.concat([left_df, right_df], axis=1)
-                        combined_df.columns = ['Metric 1', 'Value 1', 'Metric 2', 'Value 2']
-                        
-                        # Replace <NA> with empty string
-                        combined_df = combined_df.fillna("")
+            # Create HTML for the table with explanations
+            html_table = "<table class='metrics-table'>"
+            html_table += "<tr><th>Metric</th><th>Value</th></tr>"
+            for _, row in metrics_df.iterrows():
+                html_table += f"<tr><td>{row['Metric']}</td><td>{row['Value']}</td></tr>"
+                html_table += f"<tr><td colspan='2'><small>{row['Explanation']}</small></td></tr>"
+            html_table += "</table>"
 
-                        # Use Streamlit's native table display
-                        st.table(combined_df)
+            st.markdown(html_table, unsafe_allow_html=True)
 
             st.success("Recommendation generation complete!")
 
