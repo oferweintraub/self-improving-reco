@@ -33,8 +33,8 @@ class BaseRecommender(ABC):
         pass
 
 class OpenAIRecommender(BaseRecommender):
-    def __init__(self, api_key, movie_story, persona, past_viewed_content, recommender_model="gpt-4-0613", evaluator_model="gpt-4-0613", n_past_recommendations=3):
-        self.client = OpenAI(api_key=st.secrets["open_api_key "])
+    def __init__(self, movie_story, persona, past_viewed_content, recommender_model="gpt-4-0613", evaluator_model="gpt-4-0613", n_past_recommendations=3):
+        self.client = OpenAI(api_key=st.secrets["open_api_key"])
         self.movie_story = movie_story
         self.persona = persona
         self.past_viewed_content = past_viewed_content
@@ -770,8 +770,7 @@ def main():
         if "open_api_key" in st.secrets:
             api_key = st.secrets["open_api_key"]
             with st.spinner("Generating recommendation..."):
-                openai_recommender = OpenAIRecommender(api_key,
-                                                    movie_stories[movie_story_key]["story"],
+                openai_recommender = OpenAIRecommender(movie_stories[movie_story_key]["story"],
                                                     personas[persona_key],
                                                     past_viewed_contents[persona_key],
                                                     recommender_model=llm_reco,
