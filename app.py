@@ -9,19 +9,6 @@ from abc import ABC, abstractmethod
 import hashlib
 import hmac
 
-# Add this near the top of your script, after imports
-# Define users and passwords
-USERS = {
-    "Alain": hashlib.sha256("ibc_2024".encode()).hexdigest(),
-    "Ofer": hashlib.sha256("ibc_2024".encode()).hexdigest(),
-}
-
-def verify_password(password, hashed_password):
-    return hmac.compare_digest(
-        hashlib.sha256(password.encode()).hexdigest(),
-        hashed_password
-    )
-
 # Abstract base class for recommenders
 class BaseRecommender(ABC):
     @abstractmethod
@@ -573,23 +560,17 @@ past_viewed_contents = {
 
 # Streamlit app
 
+
+# Define users and passwords
+USERS = {
+    "Alain": hashlib.sha256("ibc_2024".encode()).hexdigest(),
+}
+
+def verify_password(password, hashed_password):
+    return hashlib.sha256(password.encode()).hexdigest() == hashed_password
+
 def main():
     st.set_page_config(layout="wide", page_title="Self-improving content recommendations based on Tru-values", menu_items=None)
-    
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-
-    if not st.session_state.authenticated:
-        st.title("Login")
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
-            if username in USERS and verify_password(password, USERS[username]):
-                st.session_state.authenticated = True
-                st.experimental_rerun()
-            else:
-                st.error("Invalid username or password")
-        return
 
     # Add CSS styles
     st.markdown("""
@@ -659,132 +640,152 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    st.title("Self improving targeting based on Tru-values")
-    
-    col1, col2, col3 = st.columns(3)
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
 
-    with col1:
-        st.markdown('<p class="big-bold-title">Select a Movie</p>', unsafe_allow_html=True)
-        movie_story_key = st.selectbox("Choose a Movie", list(movie_stories.keys()), key="movie_select")
-        st.markdown(f'<div class="content-box">{format_movie_story(movie_stories[movie_story_key]["story"])}</div>', unsafe_allow_html=True)
+    if not st.session_state.authenticated:
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            if username in USERS and verify_password(password, USERS[username]):
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+    else:
+        st.title("Self improving targeting based on Tru-values")
+        
+        col1, col2, col3 = st.columns(3)
 
-    with col2:
-        st.markdown('<p class="big-bold-title">Select a Persona</p>', unsafe_allow_html=True)
-        persona_key = st.selectbox("Choose a Persona", list(personas.keys()), key="persona_select")
-        st.markdown(f'<div class="content-box">{format_persona(personas[persona_key])}</div>', unsafe_allow_html=True)
+        with col1:
+            st.markdown('<p class="big-bold-title">Select a Movie</p>', unsafe_allow_html=True)
+            movie_story_key = st.selectbox("Choose a Movie", list(movie_stories.keys()), key="movie_select")
+            st.markdown(f'<div class="content-box">{format_movie_story(movie_stories[movie_story_key]["story"])}</div>', unsafe_allow_html=True)
 
-    with col3:
-        st.markdown('<p class="big-bold-title">Past Viewed Content</p>', unsafe_allow_html=True)
-        st.selectbox("Past viewed content", [persona_key], key="past_viewed_content_select", disabled=True)
-        st.markdown(f'<div class="content-box">{format_past_viewed(past_viewed_contents[persona_key])}</div>', unsafe_allow_html=True)
+        with col2:
+            st.markdown('<p class="big-bold-title">Select a Persona</p>', unsafe_allow_html=True)
+            persona_key = st.selectbox("Choose a Persona", list(personas.keys()), key="persona_select")
+            st.markdown(f'<div class="content-box">{format_persona(personas[persona_key])}</div>', unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+        with col3:
+            st.markdown('<p class="big-bold-title">Past Viewed Content</p>', unsafe_allow_html=True)
+            st.selectbox("Past viewed content", [persona_key], key="past_viewed_content_select", disabled=True)
+            st.markdown(f'<div class="content-box">{format_past_viewed(past_viewed_contents[persona_key])}</div>', unsafe_allow_html=True)
 
-    col_reco, col_eval, _ = st.columns([1, 1, 2])
+        st.markdown("<br>", unsafe_allow_html=True)
 
-    with col_reco:
-        llm_reco = st.selectbox("Recommender Model", ["gpt-4-0613", "gpt-3.5-turbo", "gpt-4o-mini"], index=2, key="reco-model-select")
+        col_reco, col_eval, _ = st.columns([1, 1, 2])
 
-    with col_eval:
-        llm_eval = st.selectbox("Evaluator Model", ["gpt-4-0613", "gpt-3.5-turbo", "gpt-4o-mini"], index=2, key="eval-model-select")
+        with col_reco:
+            llm_reco = st.selectbox("Recommender Model", ["gpt-4-0613", "gpt-3.5-turbo", "gpt-4o-mini"], index=2, key="reco-model-select")
 
-    col_generate, col_reset, _ = st.columns([1, 1, 2])
+        with col_eval:
+            llm_eval = st.selectbox("Evaluator Model", ["gpt-4-0613", "gpt-3.5-turbo", "gpt-4o-mini"], index=2, key="eval-model-select")
 
-    with col_generate:
-        generate_button = st.button("Generate Recommendation")
+        col_generate, col_reset, _ = st.columns([1, 1, 2])
 
-    with col_reset:
-        reset_button = st.button("Reset", key="reset_button", help="Clear all results and start over")
+        with col_generate:
+            generate_button = st.button("Generate Recommendation")
 
-    if reset_button:
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        st.rerun()
+        with col_reset:
+            reset_button = st.button("Reset", key="reset_button", help="Clear all results and start over")
 
-    if generate_button:
-        if "open_api_key" in st.secrets:
-            api_key = st.secrets["open_api_key"]
-            with st.spinner("Generating recommendation..."):
-                openai_recommender = OpenAIRecommender(movie_stories[movie_story_key]["story"],
-                                                    personas[persona_key],
-                                                    past_viewed_contents[persona_key],
-                                                    recommender_model=llm_reco,
-                                                    evaluator_model=llm_eval,
-                                                    n_past_recommendations=3)
-                recommender = MovieRecommender(openai_recommender)
+        if reset_button:
+            for key in list(st.session_state.keys()):
+                if key != "authenticated":
+                    del st.session_state[key]
+            st.rerun()
 
-                update_placeholder = st.empty()
+        if generate_button:
+            if "open_api_key" in st.secrets:
+                api_key = st.secrets["open_api_key"]
+                with st.spinner("Generating recommendation..."):
+                    openai_recommender = OpenAIRecommender(movie_stories[movie_story_key]["story"],
+                                                        personas[persona_key],
+                                                        past_viewed_contents[persona_key],
+                                                        recommender_model=llm_reco,
+                                                        evaluator_model=llm_eval,
+                                                        n_past_recommendations=3)
+                    recommender = MovieRecommender(openai_recommender)
 
-                for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
-                    with update_placeholder.container():
-                        st.markdown(f"### Iteration {iteration}")
-                        st.markdown(f"**One-liner:** {one_liner}")
-                        st.markdown(f"**Tailored Message:** {tailored_message}")
-                        st.progress(iteration / recommender.max_iterations)
+                    update_placeholder = st.empty()
 
-                        st.write("Current Metrics:")
+                    for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
+                        with update_placeholder.container():
+                            st.markdown(f"### Iteration {iteration}")
+                            st.markdown(f"**One-liner:** {one_liner}")
+                            st.markdown(f"**Tailored Message:** {tailored_message}")
+                            st.progress(iteration / recommender.max_iterations)
 
-                        total_score = metrics.get('total_score', 'N/A')
-                        st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
-                        
-                        metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
-                        metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
+                            st.write("Current Metrics:")
 
-                        # Add explanations for each metric
-                        metric_explanations = {
-                            'iteration': 'Current iteration number in the recommendation process.',
-                            'total_score': 'Overall score combining all individual metric scores.',
-                            'moving_avg': 'Average of recent scores to track improvement trends.',
-                            'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
-                            'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
-                            'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
-                            'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
-                            'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
-                            'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
-                            'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
-                            'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
-                            'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
-                            'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
-                            'cultural_relevance_score': 'Relevance to current cultural trends and values.',
-                            'overall_improvement': 'Degree of enhancement compared to previous iterations.'
-                        }
+                            total_score = metrics.get('total_score', 'N/A')
+                            st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
+                            
+                            metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
+                            metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
 
-                        # Create HTML for the table with explanations
-                        html_table = "<table class='metrics-table'>"
-                        html_table += "<tr><th>Metric</th><th>Value</th><th>Explanation</th></tr>"
-                        for _, row in metrics_df.iterrows():
-                            metric = row['Metric']
-                            value = row['Value']
-                            explanation = metric_explanations.get(metric, "")
-                            html_table += f"<tr><td>{metric}</td><td>{value}</td><td><small>{explanation}</small></td></tr>"
-                        html_table += "</table>"
+                            # Add explanations for each metric
+                            metric_explanations = {
+                                'iteration': 'Current iteration number in the recommendation process.',
+                                'total_score': 'Overall score combining all individual metric scores.',
+                                'moving_avg': 'Average of recent scores to track improvement trends.',
+                                'one_liner_relevance': 'How well the one-liner aligns with the persona and movie.',
+                                'one_liner_emotionalImpact': 'Emotional resonance of the one-liner with the target audience.',
+                                'one_liner_clarity': 'Clarity and understandability of the one-liner message.',
+                                'one_liner_creativity': 'Originality and inventiveness of the one-liner.',
+                                'tailored_message_relevance': 'Alignment of the tailored message with persona and movie.',
+                                'tailored_message_callToAction': 'Effectiveness in motivating the audience to take action.',
+                                'tailored_message_persuasiveness': 'Power of the message to convince the target audience.',
+                                'tailored_message_specificity': 'Level of detail and precision in the tailored message.',
+                                'diversity_score': 'Variety and uniqueness compared to previous recommendations.',
+                                'persona_alignment_score': 'How well the recommendation matches the persona\'s interests.',
+                                'cultural_relevance_score': 'Relevance to current cultural trends and values.',
+                                'overall_improvement': 'Degree of enhancement compared to previous iterations.'
+                            }
 
-                        st.markdown(html_table, unsafe_allow_html=True)
+                            # Create HTML for the table with explanations
+                            html_table = "<table class='metrics-table'>"
+                            html_table += "<tr><th>Metric</th><th>Value</th><th>Explanation</th></tr>"
+                            for _, row in metrics_df.iterrows():
+                                metric = row['Metric']
+                                value = row['Value']
+                                explanation = metric_explanations.get(metric, "")
+                                html_table += f"<tr><td>{metric}</td><td>{value}</td><td><small>{explanation}</small></td></tr>"
+                            html_table += "</table>"
 
-            st.success("Recommendation generation complete!")
+                            st.markdown(html_table, unsafe_allow_html=True)
 
-            st.session_state.recommender = recommender
-            st.session_state.best_iteration = max(recommender.metrics_history, key=lambda x: x['total_score'])
+                st.success("Recommendation generation complete!")
 
-            if 'recommender' in st.session_state and 'best_iteration' in st.session_state:
-                recommender = st.session_state.recommender
-                best_iteration = st.session_state.best_iteration
+                st.session_state.recommender = recommender
+                st.session_state.best_iteration = max(recommender.metrics_history, key=lambda x: x['total_score'])
 
-                st.markdown('<p class="big-bold-title">Best Performing Recommendations</p>', unsafe_allow_html=True)
-                st.write(f"Iteration: {best_iteration['iteration']}")
-                st.write(f"Total Score: {best_iteration['total_score']:.2f}")
-                st.write(f"Best One-liner: {recommender.best_one_liner}")
-                st.write(f"Best Tailored Message: {recommender.best_tailored_message}")
+                if 'recommender' in st.session_state and 'best_iteration' in st.session_state:
+                    recommender = st.session_state.recommender
+                    best_iteration = st.session_state.best_iteration
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    recommender.plot_metrics(["one_liner_relevance", "one_liner_emotionalImpact"], "One-liner Metrics")
-                    recommender.plot_metrics(["persona_alignment_score", "cultural_relevance_score"], "Alignment Scores")
-                with col2:
-                    recommender.plot_metrics(["tailored_message_persuasiveness", "tailored_message_callToAction"], "Tailored Message Metrics")
-                    recommender.plot_metrics(["total_score", "moving_avg"], "Total Score and Moving Average")
-        else:
-            st.error("OpenAI API key not found in secrets. Please add it to continue.")
+                    st.markdown('<p class="big-bold-title">Best Performing Recommendations</p>', unsafe_allow_html=True)
+                    st.write(f"Iteration: {best_iteration['iteration']}")
+                    st.write(f"Total Score: {best_iteration['total_score']:.2f}")
+                    st.write(f"Best One-liner: {recommender.best_one_liner}")
+                    st.write(f"Best Tailored Message: {recommender.best_tailored_message}")
+
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        recommender.plot_metrics(["one_liner_relevance", "one_liner_emotionalImpact"], "One-liner Metrics")
+                        recommender.plot_metrics(["persona_alignment_score", "cultural_relevance_score"], "Alignment Scores")
+                    with col2:
+                        recommender.plot_metrics(["tailored_message_persuasiveness", "tailored_message_callToAction"], "Tailored Message Metrics")
+                        recommender.plot_metrics(["total_score", "moving_avg"], "Total Score and Moving Average")
+            else:
+                st.error("OpenAI API key not found in secrets. Please add it to continue.")
+
+        # Add a logout button
+        if st.button("Logout"):
+            st.session_state.authenticated = False
+            st.rerun()
 
 if __name__ == "__main__":
     main()
