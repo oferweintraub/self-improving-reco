@@ -1,3 +1,4 @@
+# Databricks notebook source
 
 import streamlit as st
 import plotly.express as px
@@ -34,7 +35,7 @@ class BaseRecommender(ABC):
 
 class OpenAIRecommender(BaseRecommender):
     def __init__(self, api_key, movie_story, persona, past_viewed_content, recommender_model="gpt-4-0613", evaluator_model="gpt-4-0613", n_past_recommendations=3):
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         self.movie_story = movie_story
         self.persona = persona
         self.past_viewed_content = past_viewed_content
@@ -767,86 +768,85 @@ def main():
         st.rerun()
 
     if generate_button:
-      api_key = st.session_state.get('api_key')
-      if api_key:
-          with st.spinner("Generating recommendation..."):
-              openai_recommender = OpenAIRecommender(api_key,
-                                                    movie_stories[movie_story_key]["story"],
-                                                    personas[persona_key],
-                                                    past_viewed_contents[persona_key],
-                                                    recommender_model=llm_reco,
-                                                    evaluator_model=llm_eval,
-                                                    n_past_recommendations=3)
-              recommender = MovieRecommender(openai_recommender)
+    if "OPENAI_API_KEY" in st.secrets:
+        api_key = st.secrets["OPENAI_API_KEY"]
+        with st.spinner("Generating recommendation..."):
+            openai_recommender = OpenAIRecommender(api_key,
+                                                  movie_stories[movie_story_key]["story"],
+                                                  personas[persona_key],
+                                                  past_viewed_contents[persona_key],
+                                                  recommender_model=llm_reco,
+                                                  evaluator_model=llm_eval,
+                                                  n_past_recommendations=3)
+            recommender = MovieRecommender(openai_recommender)
 
-              # Create a placeholder for live updates
-              update_placeholder = st.empty()
+            # Create a placeholder for live updates
+            update_placeholder = st.empty()
 
-              # Run the recommendation loop and show live updates
-              for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
-                  with update_placeholder.container():
-                      st.markdown(f"### Iteration {iteration}")
-                      st.markdown(f"**One-liner:** {one_liner}")
-                      st.markdown(f"**Tailored Message:** {tailored_message}")
-                      st.progress(iteration / recommender.max_iterations)
+            # Run the recommendation loop and show live updates
+            for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
+                with update_placeholder.container():
+                    st.markdown(f"### Iteration {iteration}")
+                    st.markdown(f"**One-liner:** {one_liner}")
+                    st.markdown(f"**Tailored Message:** {tailored_message}")
+                    st.progress(iteration / recommender.max_iterations)
 
-                      # Display metrics in a single four-column table
-                      st.write("Current Metrics:")
+                    # Display metrics in a single four-column table
+                    st.write("Current Metrics:")
 
-                      # Highlight total_score
-                      total_score = metrics.get('total_score', 'N/A')
-                      st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
-                      
-                      metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
-                      metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
+                    # Highlight total_score
+                    total_score = metrics.get('total_score', 'N/A')
+                    st.markdown(f"**Total Score:** <span style='color: red; font-weight: bold;'>{total_score:.2f}</span>", unsafe_allow_html=True)
+                    
+                    metrics_df = pd.DataFrame(list(metrics.items()), columns=['Metric', 'Value'])
+                    metrics_df['Value'] = metrics_df['Value'].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else x)
 
-                      # Replace <NA> with empty string
-                      metrics_df = metrics_df.fillna("")
+                    # Replace <NA> with empty string
+                    metrics_df = metrics_df.fillna("")
 
-                      # Split the DataFrame into two parts
-                      half = len(metrics_df) // 2
-                      left_df = metrics_df.iloc[:half].reset_index(drop=True)
-                      right_df = metrics_df.iloc[half:].reset_index(drop=True)
+                    # Split the DataFrame into two parts
+                    half = len(metrics_df) // 2
+                    left_df = metrics_df.iloc[:half].reset_index(drop=True)
+                    right_df = metrics_df.iloc[half:].reset_index(drop=True)
 
-                      # Combine into a single DataFrame with four columns
-                      combined_df = pd.concat([left_df, right_df], axis=1)
-                      combined_df.columns = ['Metric 1', 'Value 1', 'Metric 2', 'Value 2']
-                      
-                      # Replace <NA> with empty string
-                      combined_df = combined_df.fillna("")
+                    # Combine into a single DataFrame with four columns
+                    combined_df = pd.concat([left_df, right_df], axis=1)
+                    combined_df.columns = ['Metric 1', 'Value 1', 'Metric 2', 'Value 2']
+                    
+                    # Replace <NA> with empty string
+                    combined_df = combined_df.fillna("")
 
-                      # Use Streamlit's native table display
-                      st.table(combined_df)
+                    # Use Streamlit's native table display
+                    st.table(combined_df)
 
-                      
-          st.success("Recommendation generation complete!")
+        st.success("Recommendation generation complete!")
 
-          # Store the results in session state
-          st.session_state.recommender = recommender
-          st.session_state.best_iteration = max(recommender.metrics_history, key=lambda x: x['total_score'])
+        # Store the results in session state
+        st.session_state.recommender = recommender
+        st.session_state.best_iteration = max(recommender.metrics_history, key=lambda x: x['total_score'])
 
-      # Display results if they exist in session state
-      if 'recommender' in st.session_state and 'best_iteration' in st.session_state:
-          recommender = st.session_state.recommender
-          best_iteration = st.session_state.best_iteration
+        # Display results if they exist in session state
+        if 'recommender' in st.session_state and 'best_iteration' in st.session_state:
+            recommender = st.session_state.recommender
+            best_iteration = st.session_state.best_iteration
 
-          st.markdown('<p class="big-bold-title">Best Performing Recommendations</p>', unsafe_allow_html=True)
-          st.write(f"Iteration: {best_iteration['iteration']}")
-          st.write(f"Total Score: {best_iteration['total_score']:.2f}")
-          st.write(f"Best One-liner: {recommender.best_one_liner}")
-          st.write(f"Best Tailored Message: {recommender.best_tailored_message}")
+            st.markdown('<p class="big-bold-title">Best Performing Recommendations</p>', unsafe_allow_html=True)
+            st.write(f"Iteration: {best_iteration['iteration']}")
+            st.write(f"Total Score: {best_iteration['total_score']:.2f}")
+            st.write(f"Best One-liner: {recommender.best_one_liner}")
+            st.write(f"Best Tailored Message: {recommender.best_tailored_message}")
 
-          # Display plots side by side
-          col1, col2 = st.columns(2)
-          with col1:
-              recommender.plot_metrics(["one_liner_relevance", "one_liner_emotionalImpact"], "One-liner Metrics")
-              recommender.plot_metrics(["persona_alignment_score", "cultural_relevance_score"], "Alignment Scores")
-          with col2:
-              recommender.plot_metrics(["tailored_message_persuasiveness", "tailored_message_callToAction"], "Tailored Message Metrics")
-              recommender.plot_metrics(["total_score", "moving_avg"], "Total Score and Moving Average")
+            # Display plots side by side
+            col1, col2 = st.columns(2)
+            with col1:
+                recommender.plot_metrics(["one_liner_relevance", "one_liner_emotionalImpact"], "One-liner Metrics")
+                recommender.plot_metrics(["persona_alignment_score", "cultural_relevance_score"], "Alignment Scores")
+            with col2:
+                recommender.plot_metrics(["tailored_message_persuasiveness", "tailored_message_callToAction"], "Tailored Message Metrics")
+                recommender.plot_metrics(["total_score", "moving_avg"], "Total Score and Moving Average")
+    else:
+        st.error("OpenAI API key not found in secrets. Please add it to continue.")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        st.session_state['api_key'] = sys.argv[1]
     main()
