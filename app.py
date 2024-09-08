@@ -161,6 +161,7 @@ class OpenAIRecommender(BaseRecommender):
             evaluation['overallImprovement'] = float(evaluation['overallImprovement'])
 
             return evaluation
+        
         except json.JSONDecodeError as e:
             print(f"Error parsing JSON: {str(e)}")
             print("Raw response:", response_content)
@@ -281,7 +282,7 @@ class MovieRecommender:
                 self.best_one_liner = one_liner
                 self.best_tailored_message = tailored_message
 
-            yield iteration, one_liner, tailored_message, metrics
+            yield iteration, one_liner, tailored_message, metrics, evaluation.get('explanation', ''), evaluation.get('improvementFeedback', {})
 
             if moving_avg >= 97:
                 break
@@ -685,7 +686,7 @@ def main():
 
                 update_placeholder = st.empty()
 
-                for iteration, one_liner, tailored_message, metrics in recommender.run_recommendation_loop():
+                for iteration, one_liner, tailored_message, metrics, explanation, improvement_feedback in recommender.run_recommendation_loop():
                     with update_placeholder.container():
                         st.markdown(f"### Iteration {iteration}")
                         st.markdown(f"**One-liner:** {one_liner}")
@@ -730,6 +731,15 @@ def main():
                         html_table += "</table>"
 
                         st.markdown(html_table, unsafe_allow_html=True)
+
+                        st.markdown("### Explanation")
+                        st.write(explanation)
+
+                        st.markdown("### Improvement Feedback")
+                        st.markdown("**One-liner:**")
+                        st.write(improvement_feedback.get('oneLiner', 'No feedback provided'))
+                        st.markdown("**Tailored Message:**")
+                        st.write(improvement_feedback.get('tailoredMessage', 'No feedback provided'))
 
             st.success("Recommendation generation complete!")
 
